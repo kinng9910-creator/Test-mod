@@ -1,25 +1,11 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "index.html",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "styles.css",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "script.js",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "API/mp3.js",
-            "use": "@vercel/node"
-        },
-        {
-            "src": "API/mp4.js",
-            "use": "@vercel/node"
-        }
-    ]
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "routes": [
+    { "src": "/api/mp3", "dest": "/api/mp3.js" },
+    { "src": "/api/mp4", "dest": "/api/mp4.js" }
+  ]
 }
