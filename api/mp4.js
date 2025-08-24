@@ -25,7 +25,11 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Please provide a valid YouTube URL" });
     }
 
+    // Construct the API URL
     const apiUrl = `${MP4_API}?url=${encodeURIComponent(url)}&format=mp4hd`;
+
+    // Log the API URL to check the request being made
+    console.log('MP4 API Request URL:', apiUrl);  // This will show the full URL in logs
 
     const r = await fetch(apiUrl, { method: "GET" });
     if (!r.ok) {
