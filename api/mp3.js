@@ -1,27 +1,40 @@
-export default async function handler(req, res) {
-    const { url } = req.query;
-    
-    try {
-        const response = await fetch(`https://ytdownloader.anshppt19.workers.dev/?url=${url}`);
+// api/mp3.js - Vercel Serverless Function (Node.js 18+)
+const MP3_API = "https://ytdownloader.anshppt19.workers.dev/?url=";
 
-        // ریسپانس کو ٹیکسٹ میں تبدیل کریں
-        const text = await response.text();
-        console.log(text);  // ریسپانس کا مواد چیک کریں
-
-        try {
-            // ٹیکسٹ کو JSON میں تبدیل کریں
-            const data = JSON.parse(text);
-            if (data.status === "success") {
-                res.status(200).json({ success: true, download_url: data.download_url, title: data.title });
-            } else {
-                res.status(400).json({ success: false, message: "Failed to fetch MP3." });
-            }
-        } catch (e) {
-            // اگر JSON پارس نہیں ہو رہا، تو وہ HTML ریسپانس ہو سکتا ہے
-            res.status(500).json({ success: false, message: "Invalid response from the API." });
-        }
-        
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+// Helper to send JSON with CORS
+function send(res, code, data) {
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.status(code).end(JSON.stringify(data));
 }
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === "OPTIONS") {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      return res.status(204).end();
+    }
+
+    const url = (req.query && req.query.url) ? String(req.query.url) : "";
+    if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
+
+    // Basic validation
+    if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
+      return send(res, 400, { error: "Please provide a valid YouTube URL" });
+    }
+
+    const apiUrl = MP3_API + encodeURIComponent(url);
+
+    const r = await fetch(apiUrl, { method: "GET" });
+    if (!r.ok) {
+      const txt = await r.text();
+      return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
+    }
+    const data = await r.json();
+    return send(res, 200, data);
+  } catch (err) {
+    return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
+  }
+};
