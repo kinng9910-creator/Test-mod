@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free YouTube to MP3</title>
+  <title>YouTube Downloader - MP3 and MP4</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -182,8 +182,8 @@
   </header>
 
   <div class="hero">
-    <h1>Free YouTube to MP3</h1>
-    <p>Convert YouTube videos to MP3. Download YouTube Audio 100% for free</p>
+    <h1>Free YouTube to MP3 & MP4</h1>
+    <p>Convert YouTube videos to MP3 and MP4. Download YouTube Audio and Video 100% for free</p>
   </div>
 
   <div class="card">
@@ -198,27 +198,8 @@
     </div>
     <div id="result" style="display:none; margin-top:15px; text-align:center;">
       <a id="download-btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Download MP3</a>
+      <div id="videoContainer"></div>  <!-- For MP4 Video -->
     </div>
-  </div>
-
-  <div class="features">
-    <div class="feature"><span>✔</span> Free and Unlimited</div>
-    <div class="feature"><span>✔</span> No Signup Required</div>
-    <div class="feature"><span>✔</span> Fast Conversion</div>
-    <div class="feature"><span>✔</span> No Ads</div>
-  </div>
-
-  <div class="more">
-    <h2>Stay Connected</h2>
-    <a href="https://t.me/ZALIM_MODZ_OFFICIAL" target="_blank" class="telegram-card">
-      <div style="background:#229ED9;width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;">
-        ✈
-      </div>
-      <div>
-        <strong>Join our Telegram</strong><br/>
-        <small style="color:#777;">Get updates & tools in our Telegram group</small>
-      </div>
-    </a>
   </div>
 
   <footer>
@@ -232,6 +213,7 @@
     const barFill = document.getElementById('barFill');
     const pct = document.getElementById('pct');
     const resultBox = document.getElementById('result');
+    const videoContainer = document.getElementById('videoContainer');
     const downloadBtn = document.getElementById('download-btn');
     let running = false;
 
@@ -253,7 +235,7 @@
         if (p < 100) {
           setTimeout(step, 300);
         } else {
-          fetch(`/api/mp4?url=${encodeURIComponent(url)}`)  // Change this line to use mp4 API
+          fetch(`/api/mp3?url=${encodeURIComponent(url)}`)
             .then(res => res.json())
             .then(data => {
               running = false;
@@ -261,7 +243,6 @@
               if (data.status === 'success') {
                 downloadBtn.href = data.download_url;
                 resultBox.style.display = "block";
-                downloadBtn.textContent = "Download MP4";  // Update the button text for MP4
               } else {
                 alert('Failed to convert. Try again.');
               }
