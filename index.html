@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 300px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 80%;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <input type="text" id="video-url" placeholder="Paste YouTube URL here">
+        <div>
+            <button id="download-mp3">Download MP3</button>
+            <button id="download-mp4">Download MP4</button>
+        </div>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('download-mp3').addEventListener('click', function() {
+            const url = document.getElementById('video-url').value;
+            if (url) {
+                fetch(`/API/mp3?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('status').innerHTML = `MP3 Download Link: <a href="${data.download_url}" target="_blank">${data.title}</a>`;
+                        } else {
+                            document.getElementById('status').innerText = 'Failed to fetch MP3.';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('status').innerText = 'Error: ' + error.message;
+                    });
+            } else {
+                document.getElementById('status').innerText = 'Please enter a valid YouTube URL.';
+            }
+        });
+
+        document.getElementById('download-mp4').addEventListener('click', function() {
+            const url = document.getElementById('video-url').value;
+            if (url) {
+                fetch(`/API/mp4?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('status').innerHTML = `MP4 Download Link: <a href="${data.video_url}" target="_blank">${data.video_name}</a>`;
+                        } else {
+                            document.getElementById('status').innerText = 'Failed to fetch MP4.';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('status').innerText = 'Error: ' + error.message;
+                    });
+            } else {
+                document.getElementById('status').innerText = 'Please enter a valid YouTube URL.';
+            }
+        });
+    </script>
+    
+</body>
+</html>
