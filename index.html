@@ -197,8 +197,13 @@
       <div class="percent"><span id="pct">0</span>%</div>
     </div>
     <div id="result" style="display:none; margin-top:15px; text-align:center;">
-      <a id="download-btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Download MP3</a>
-      <div id="videoContainer"></div>  <!-- For MP4 Video -->
+      <div id="mp3Container" style="display:none;">
+        <a id="downloadMp3Btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Download MP3</a>
+      </div>
+      <div id="mp4Container" style="display:none;">
+        <video id="mp4Video" controls width="640"></video>
+        <a id="downloadMp4Btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top: 10px;">Download MP4</a>
+      </div>
     </div>
   </div>
 
@@ -213,8 +218,11 @@
     const barFill = document.getElementById('barFill');
     const pct = document.getElementById('pct');
     const resultBox = document.getElementById('result');
-    const videoContainer = document.getElementById('videoContainer');
-    const downloadBtn = document.getElementById('download-btn');
+    const mp3Container = document.getElementById('mp3Container');
+    const mp4Container = document.getElementById('mp4Container');
+    const downloadMp3Btn = document.getElementById('downloadMp3Btn');
+    const downloadMp4Btn = document.getElementById('downloadMp4Btn');
+    const mp4Video = document.getElementById('mp4Video');
     let running = false;
 
     convertBtn.addEventListener('click', () => {
@@ -226,6 +234,8 @@
       spinner.style.display = "inline-block";
       progress.style.display = "block";
       resultBox.style.display = "none";
+      mp3Container.style.display = "none";
+      mp4Container.style.display = "none";
 
       let p = 0;
       function step() {
@@ -241,7 +251,8 @@
               running = false;
               spinner.style.display = "none";
               if (data.status === 'success') {
-                downloadBtn.href = data.download_url;
+                downloadMp3Btn.href = data.download_url;
+                mp3Container.style.display = "block";
                 resultBox.style.display = "block";
               } else {
                 alert('Failed to convert. Try again.');
@@ -251,6 +262,20 @@
               running = false;
               spinner.style.display = "none";
               alert('Error: ' + err.message);
+            });
+
+          fetch(`/api/mp4?url=${encodeURIComponent(url)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === 'success') {
+                mp4Video.src = data.download_url;
+                downloadMp4Btn.href = data.download_url;
+                mp4Container.style.display = "block";
+                resultBox.style.display = "block";
+              }
+            })
+            .catch(err => {
+              alert('MP4 Error: ' + err.message);
             });
         }
       }
