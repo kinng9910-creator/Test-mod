@@ -1,286 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Downloader - MP3 and MP4</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #fafafa;
-      color: #333;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-    }
-    .brand {
-      font-weight: bold;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .brand span {
-      color: #6a4bdb;
-    }
-    .hero {
-      background: #f5efff;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .hero h1 {
-      margin: 0;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    .hero p {
-      margin: 8px 0 0;
-      color: #555;
-    }
-    .card {
-      max-width: 700px;
-      margin: -30px auto 0;
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .input-group {
-      position: relative;
-      display: flex;
-      align-items: center;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px 14px 10px 42px;
-    }
-    .input-group svg {
-      position: absolute;
-      left: 14px;
-      width: 18px;
-      height: 18px;
-    }
-    .input-group input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 16px;
-    }
-    .convert-btn {
-      margin-top: 14px;
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background: #7f67e9;
-      color: #fff;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-    }
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,.5);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      display: none;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .progress {
-      margin-top: 14px;
-      display: none;
-    }
-    .progress-bar {
-      width: 100%;
-      background: #eee;
-      border-radius: 8px;
-      height: 10px;
-      overflow: hidden;
-    }
-    .progress-bar span {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: #7f67e9;
-      border-radius: 8px;
-      transition: width 0.3s;
-    }
-    .percent {
-      margin-top: 6px;
-      text-align: center;
-      font-size: 14px;
-      color: #555;
-    }
-    .features {
-      max-width: 700px;
-      margin: 20px auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-    .feature {
-      background: #fff;
-      padding: 10px 14px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .feature span {
-      color: #22c55e;
-      font-size: 16px;
-    }
-    .more {
-      max-width: 700px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    .telegram-card {
-      background: #fff;
-      padding: 14px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border-left: 4px solid #229ED9;
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.2s;
-    }
-    .telegram-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
-    footer {
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-      margin: 30px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
 </head>
 <body>
-  <header>
-    <div class="brand"><span>⚡</span> Toolsmart</div>
-    <div>☰</div>
-  </header>
+    <h1>YouTube Video Downloader</h1>
+    <form id="downloadForm">
+        <label for="videoLink">Enter YouTube Video URL:</label><br>
+        <input type="text" id="videoLink" name="videoLink" required><br><br>
+        <button type="submit">Download</button>
+    </form>
 
-  <div class="hero">
-    <h1>Free YouTube to MP3 & MP4</h1>
-    <p>Convert YouTube videos to MP3 and MP4. Download YouTube Audio and Video 100% for free</p>
-  </div>
+    <div id="result"></div>
 
-  <div class="card">
-    <div class="input-group">
-      <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#FF0000"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="white"/></svg>
-      <input type="text" id="yt-url" placeholder="https://youtu.be/example" />
-    </div>
-    <button class="convert-btn" id="convertBtn">Convert <span class="spinner" id="spinner"></span></button>
-    <div class="progress" id="progress">
-      <div class="progress-bar"><span id="barFill"></span></div>
-      <div class="percent"><span id="pct">0</span>%</div>
-    </div>
-    <div id="result" style="display:none; margin-top:15px; text-align:center;">
-      <div id="mp3Container" style="display:none;">
-        <a id="downloadMp3Btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Download MP3</a>
-      </div>
-      <div id="mp4Container" style="display:none;">
-        <video id="mp4Video" controls width="640"></video>
-        <a id="downloadMp4Btn" href="#" target="_blank" style="background:#7f67e9;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top: 10px;">Download MP4</a>
-      </div>
-    </div>
-  </div>
+    <script>
+        document.getElementById('downloadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const videoLink = document.getElementById('videoLink').value;
 
-  <footer>
-    Made with ❤️ for you
-  </footer>
-
-  <script>
-    const convertBtn = document.getElementById('convertBtn');
-    const spinner = document.getElementById('spinner');
-    const progress = document.getElementById('progress');
-    const barFill = document.getElementById('barFill');
-    const pct = document.getElementById('pct');
-    const resultBox = document.getElementById('result');
-    const mp3Container = document.getElementById('mp3Container');
-    const mp4Container = document.getElementById('mp4Container');
-    const downloadMp3Btn = document.getElementById('downloadMp3Btn');
-    const downloadMp4Btn = document.getElementById('downloadMp4Btn');
-    const mp4Video = document.getElementById('mp4Video');
-    let running = false;
-
-    convertBtn.addEventListener('click', () => {
-      const url = document.getElementById('yt-url').value.trim();
-      if (!url) return alert('Please enter a YouTube URL');
-      if (running) return;
-      running = true;
-
-      spinner.style.display = "inline-block";
-      progress.style.display = "block";
-      resultBox.style.display = "none";
-      mp3Container.style.display = "none";
-      mp4Container.style.display = "none";
-
-      let p = 0;
-      function step() {
-        p += 10;
-        barFill.style.width = p + '%';
-        pct.textContent = p;
-        if (p < 100) {
-          setTimeout(step, 300);
-        } else {
-          fetch(`/api/mp3?url=${encodeURIComponent(url)}`)
-            .then(res => res.json())
-            .then(data => {
-              running = false;
-              spinner.style.display = "none";
-              if (data.status === 'success') {
-                downloadMp3Btn.href = data.download_url;
-                mp3Container.style.display = "block";
-                resultBox.style.display = "block";
-              } else {
-                alert('Failed to convert. Try again.');
-              }
-            })
-            .catch(err => {
-              running = false;
-              spinner.style.display = "none";
-              alert('Error: ' + err.message);
+            // Call MP3 API
+            const mp3Response = await fetch('/api/mp3', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ link: videoLink })
             });
 
-          fetch(`/api/mp4?url=${encodeURIComponent(url)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === 'success') {
-                mp4Video.src = data.download_url;
-                downloadMp4Btn.href = data.download_url;
-                mp4Container.style.display = "block";
-                resultBox.style.display = "block";
-              }
-            })
-            .catch(err => {
-              alert('MP4 Error: ' + err.message);
+            const mp3Result = await mp3Response.json();
+
+            // Call MP4 API
+            const mp4Response = await fetch('/api/mp4', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ link: videoLink })
             });
-        }
-      }
-      step();
-    });
-  </script>
+
+            const mp4Result = await mp4Response.json();
+
+            // Show download links for MP3 and MP4
+            document.getElementById('result').innerHTML = `
+                🎧 MP3: <a href="${mp3Result.mp3Link}" target="_blank">Download</a><br>
+                🎬 MP4: <a href="${mp4Result.mp4Link}" target="_blank">Download</a>
+            `;
+        });
+    </script>
 </body>
 </html>
