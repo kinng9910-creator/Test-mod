@@ -1,26 +1,38 @@
-const fetch = require('node-fetch');
+// api/mp4.js - Vercel Serverless Function
+const MP4_API = "https://ytdownloader.anshppt19.workers.dev/mp4?url=";
+
+function send(res, code, data) {
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.status(code).end(JSON.stringify(data));
+}
 
 module.exports = async (req, res) => {
-    if (req.method === 'POST') {
-        const { link } = req.body;
-        try {
-            const mp4Link = await getMp4Link(link);
-            res.status(200).json({ mp4Link: mp4Link });
-        } catch (error) {
-            res.status(500).json({ message: 'Error downloading MP4.', error: error.message });
-        }
-    } else {
-        res.status(405).json({ message: 'Method Not Allowed' });
+  try {
+    if (req.method === "OPTIONS") {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      return res.status(204).end();
     }
-};
 
-// Function to get MP4 link
-async function getMp4Link(link) {
-    const API_URL = `https://youtube.anshppt19.workers.dev/anshapi?url=${link}&format=mp4hd`;
-    const response = await fetch(API_URL);
-    const data = await response.json();
-    if (data.success) {
-        return data.data.url_mp4_youtube;
+    const url = (req.query && req.query.url) ? String(req.query.url) : "";
+    if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
+
+    if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
+      return send(res, 400, { error: "Please provide a valid YouTube URL" });
     }
-    throw new Error('Failed to fetch MP4');
-}
+
+    const apiUrl = MP4_API + encodeURIComponent(url);
+
+    const r = await fetch(apiUrl, { method: "GET" });
+    if (!r.ok) {
+      const txt = await r.text();
+      return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
+    }
+    const data = await r.json();
+    return send(res, 200, data);
+  } catch (err) {
+    return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
+  }
+};
