@@ -1,5 +1,5 @@
 // api/mp4.js - Vercel Serverless Function
-const MP4_API = "https://ytdownloader.anshppt19.workers.dev/mp4?url=";
+const MP4_API = "https://youtube.anshppt19.workers.dev/anshapi?url=";
 
 function send(res, code, data) {
   res.setHeader("Content-Type", "application/json");
