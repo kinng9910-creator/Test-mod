@@ -1,49 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Downloader</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    button { margin: 10px; padding: 10px 20px; font-size: 18px; }
+    .box { display: none; margin-top: 20px; }
+    input { width: 80%; padding: 10px; margin: 10px 0; }
+    #downloadLink { margin-top: 20px; display: block; font-weight: bold; }
+  </style>
 </head>
 <body>
-    <h1>YouTube Video Downloader</h1>
-    <form id="downloadForm">
-        <label for="videoLink">Enter YouTube Video URL:</label><br>
-        <input type="text" id="videoLink" name="videoLink" required><br><br>
-        <button type="submit">Download</button>
-    </form>
+  <h1>YouTube Downloader</h1>
+  <p>Select format:</p>
+  <button onclick="showBox('mp3')">Download MP3</button>
+  <button onclick="showBox('mp4')">Download MP4</button>
 
-    <div id="result"></div>
+  <!-- MP3 Box -->
+  <div id="mp3Box" class="box">
+    <h3>Convert to MP3</h3>
+    <input type="text" id="mp3Url" placeholder="Enter YouTube URL">
+    <button onclick="downloadFile('mp3')">Download MP3</button>
+    <a id="mp3DownloadLink" href="#" target="_blank"></a>
+  </div>
 
-    <script>
-        document.getElementById('downloadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const videoLink = document.getElementById('videoLink').value;
+  <!-- MP4 Box -->
+  <div id="mp4Box" class="box">
+    <h3>Convert to MP4</h3>
+    <input type="text" id="mp4Url" placeholder="Enter YouTube URL">
+    <button onclick="downloadFile('mp4')">Download MP4</button>
+    <a id="mp4DownloadLink" href="#" target="_blank"></a>
+  </div>
 
-            // Call MP3 API
-            const mp3Response = await fetch('/api/mp3', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ link: videoLink })
-            });
+  <script>
+    function showBox(type) {
+      document.getElementById('mp3Box').style.display = (type === 'mp3') ? 'block' : 'none';
+      document.getElementById('mp4Box').style.display = (type === 'mp4') ? 'block' : 'none';
+    }
 
-            const mp3Result = await mp3Response.json();
+    async function downloadFile(type) {
+      const url = document.getElementById(type + 'Url').value;
+      if (!url) return alert('Please enter a YouTube URL');
 
-            // Call MP4 API
-            const mp4Response = await fetch('/api/mp4', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ link: videoLink })
-            });
+      const response = await fetch(`/api/${type}?url=${encodeURIComponent(url)}`);
+      const data = await response.json();
 
-            const mp4Result = await mp4Response.json();
+      if (data.error) {
+        alert('Error: ' + data.error);
+        return;
+      }
 
-            // Show download links for MP3 and MP4
-            document.getElementById('result').innerHTML = `
-                🎧 MP3: <a href="${mp3Result.mp3Link}" target="_blank">Download</a><br>
-                🎬 MP4: <a href="${mp4Result.mp4Link}" target="_blank">Download</a>
-            `;
-        });
-    </script>
+      const linkElement = document.getElementById(type + 'DownloadLink');
+      linkElement.href = data.link || data.download || '#';
+      linkElement.textContent = `Click here to download ${type.toUpperCase()}`;
+    }
+  </script>
 </body>
 </html>
