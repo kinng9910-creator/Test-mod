@@ -36,11 +36,11 @@ module.exports = async (req, res) => {
 
     const data = await r.json();
 
-    // Checking for MP3 format only
+    // Checking if MP3 download link is available
     if (data && data.audio && data.audio.mp3) {
       return send(res, 200, { mp3_url: data.audio.mp3 });
     } else {
-      return send(res, 400, { error: "MP3 format is not available for this video." });
+      return send(res, 404, { error: "Download link not found. The video may not have an MP3 version available." });
     }
 
   } catch (err) {
