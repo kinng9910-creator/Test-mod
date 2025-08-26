@@ -1,5 +1,5 @@
 // api/mp3.js - Vercel Serverless Function (Node.js 18+)
-const MP3_API = "https://ytdownloader.anshppt19.workers.dev/?url=";
+const MP3_API = "https://ytaudiodownloader.ytansh038.workers.dev/?url=";
 
 // Helper to send JSON with CORS
 function send(res, code, data) {
