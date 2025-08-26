@@ -1,5 +1,5 @@
 // api/mp3.js - Vercel Serverless Function (Node.js 18+)
-const MP3_API = "https://ytaudiodownloader.ytansh038.workers.dev/?url=";
+const MP3_API = "https://ytvideownloader.ytansh038.workers.dev/?url=";
 
 // Helper to send JSON with CORS
 function send(res, code, data) {
@@ -20,20 +20,29 @@ module.exports = async (req, res) => {
     const url = (req.query && req.query.url) ? String(req.query.url) : "";
     if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
 
-    // Basic validation
+    // Basic validation: Only YouTube URLs allowed
     if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
       return send(res, 400, { error: "Please provide a valid YouTube URL" });
     }
 
     const apiUrl = MP3_API + encodeURIComponent(url);
 
+    // Fetching the data from the external API
     const r = await fetch(apiUrl, { method: "GET" });
     if (!r.ok) {
       const txt = await r.text();
       return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
     }
+
     const data = await r.json();
-    return send(res, 200, data);
+
+    // Checking for MP3 format only
+    if (data && data.audio && data.audio.mp3) {
+      return send(res, 200, { mp3_url: data.audio.mp3 });
+    } else {
+      return send(res, 400, { error: "MP3 format is not available for this video." });
+    }
+
   } catch (err) {
     return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
   }
