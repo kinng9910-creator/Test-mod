@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
       return res.status(204).end();
     }
 
-    const url = (req.query && req.query.url) ? String(req.query.url) : "";
+    const url = req.query?.url ? String(req.query.url) : "";
     if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
 
     if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
@@ -32,19 +32,9 @@ module.exports = async (req, res) => {
     }
 
     const data = await r.json();
-
-    if (!data.download_url) {
-      return send(res, 200, {
-        message: "Video is being processed. Please poll the progress URL.",
-        progress_url: data.instructions?.polling_endpoint || data.progress_url || null,
-        recommended_interval: data.instructions?.recommended_interval || "3-5 seconds",
-        raw: data
-      });
-    }
-
     return send(res, 200, data);
 
   } catch (err) {
-    return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
+    return send(res, 500, { error: "Server error", details: String(err?.message || err) });
   }
 };
