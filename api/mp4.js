@@ -24,14 +24,24 @@ module.exports = async (req, res) => {
     }
 
     const apiUrl = MP4_API + encodeURIComponent(url);
-
     const r = await fetch(apiUrl, { method: "GET" });
+
     if (!r.ok) {
       const txt = await r.text();
       return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
     }
 
     const data = await r.json();
+
+    if (!data.download_url) {
+      return send(res, 200, {
+        message: "Video is being processed. Please poll the progress URL.",
+        progress_url: data.instructions?.polling_endpoint || data.progress_url || null,
+        recommended_interval: data.instructions?.recommended_interval || "3-5 seconds",
+        raw: data
+      });
+    }
+
     return send(res, 200, data);
 
   } catch (err) {
