@@ -1,5 +1,5 @@
 // api/mp4.js
-const MP4_API = "https://youtube.anshppt19.workers.dev/anshapi?url=";
+const MP4_API = "https://chathuraytdl.netlify.app/ytdl?url=";
 
 function send(res, code, data) {
   res.setHeader("Content-Type", "application/json");
@@ -19,7 +19,6 @@ module.exports = async (req, res) => {
     const url = (req.query && req.query.url) ? String(req.query.url) : "";
     if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
 
-    // Validate YouTube URL
     if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
       return send(res, 400, { error: "Please provide a valid YouTube URL" });
     }
@@ -32,6 +31,25 @@ module.exports = async (req, res) => {
       return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
     }
     const data = await r.json();
+
+    // اگر ویڈیو پروسیسنگ میں ہو
+    if (data.processing_status === "processing") {
+      return send(res, 200, {
+        status: "processing",
+        message: "Video is being processed, check again after a few seconds.",
+        poll: data.instructions?.polling_endpoint || null
+      });
+    }
+
+    // اگر ڈاؤنلوڈ لنک available ہو
+    if (data.download_url) {
+      return send(res, 200, {
+        status: "ready",
+        title: data.title || "",
+        download_url: data.download_url
+      });
+    }
+
     return send(res, 200, data);
   } catch (err) {
     return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
