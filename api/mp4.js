@@ -1,4 +1,4 @@
-// api/mp4.js - Vercel Serverless Function
+// api/mp4.js
 const MP4_API = "https://youtube.anshppt19.workers.dev/anshapi?url=";
 
 function send(res, code, data) {
@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
     const url = (req.query && req.query.url) ? String(req.query.url) : "";
     if (!url) return send(res, 400, { error: "Missing 'url' query parameter" });
 
+    // Validate YouTube URL
     if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
       return send(res, 400, { error: "Please provide a valid YouTube URL" });
     }
