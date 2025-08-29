@@ -30,27 +30,10 @@ module.exports = async (req, res) => {
       const txt = await r.text();
       return send(res, 502, { error: `Upstream failed (${r.status})`, details: txt.slice(0, 500) });
     }
+
     const data = await r.json();
-
-    // اگر ویڈیو پروسیسنگ میں ہو
-    if (data.processing_status === "processing") {
-      return send(res, 200, {
-        status: "processing",
-        message: "Video is being processed, check again after a few seconds.",
-        poll: data.instructions?.polling_endpoint || null
-      });
-    }
-
-    // اگر ڈاؤنلوڈ لنک available ہو
-    if (data.download_url) {
-      return send(res, 200, {
-        status: "ready",
-        title: data.title || "",
-        download_url: data.download_url
-      });
-    }
-
     return send(res, 200, data);
+
   } catch (err) {
     return send(res, 500, { error: "Server error", details: String(err && err.message || err) });
   }
